@@ -240,13 +240,19 @@ namespace BlowfishVarBlock.PCL
 
         uint[] P;
         uint[,] S;
-
+        /// <summary>
+        /// If you create an instance with this constructor, you must later call Initialize(key)
+        /// </summary>
+        public Blowfish() { }
         /// <summary>
         /// Constructs and initializes a blowfish instance with the supplied key.
         /// </summary>
         /// <param name="key">The key to cipher with.</param>
         public Blowfish(byte[] key)
         {
+            Initialize(key);
+        }
+        public void Initialize(byte[] key) { 
             short i;
             short j;
             short k;

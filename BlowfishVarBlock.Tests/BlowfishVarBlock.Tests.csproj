@@ -55,6 +55,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BlowfishVarBlock.PCL\BlowfishVarBlock.PCL.csproj">
+      <Project>{1a3f6f4c-2e9c-4464-9294-b5260bcf9cc3}</Project>
+      <Name>BlowfishVarBlock.PCL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BlowfishVarBlock\BlowfishVarBlock.csproj">
       <Project>{3DEC9EB0-7538-4DA7-9603-7AD6748E2688}</Project>
       <Name>BlowfishVarBlock</Name>

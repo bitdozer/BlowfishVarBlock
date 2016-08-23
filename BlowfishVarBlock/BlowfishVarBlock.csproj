@@ -44,6 +44,12 @@
     <Compile Include="BlowfishStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BlowfishVarBlock.PCL\BlowfishVarBlock.PCL.csproj">
+      <Project>{1a3f6f4c-2e9c-4464-9294-b5260bcf9cc3}</Project>
+      <Name>BlowfishVarBlock.PCL</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
