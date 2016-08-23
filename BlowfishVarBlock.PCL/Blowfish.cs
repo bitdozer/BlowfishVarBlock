@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace BlowfishVarBlock.PCL
 {
@@ -409,19 +410,30 @@ namespace BlowfishVarBlock.PCL
         {
             //todo: create a version that can project any even block size
             uint xl, xr;
-            if (blocksize > 64 || blocksize < 8 || (length % (blocksize / 8)) != 0)
+
+            // determine needed chunksize from blocksize (number of bytes to cipher per cycle)
+            int chunksize = (blocksize % 8 == 0) ? blocksize / 8 : blocksize / 8 + 1;
+
+            if (blocksize > 64 || blocksize < 8 || (length % chunksize) != 0)
                 throw new Exception("Invalid Length");
-            byte[] buffer = new byte[blocksize / 8];
+
+
+            byte[] buffer = new byte[chunksize];
             byte[] uintbuffer = new byte[8];
-            for (int i = 0; i < length; i += (blocksize / 8))
+            for (int i = 0; i < length; i += (chunksize))
             {
                 // create a blocksize payload in a 64-bit space by projecting blocksize/2 bits into two uints
                 // copy just the target bits into a blocksize buffer
-                Buffer.BlockCopy(data, i, buffer, 0, blocksize / 8);
+                Buffer.BlockCopy(data, i, buffer, 0, chunksize);
+
+                // todo: figure out how to convert a valid bitarray from one chunk size to another 
+
+                var a = new BitArray(buffer);
                 // need to reverse the bit order to create uint
-                Array.Reverse(buffer);
+                //Array.Reverse(buffer);
                 // copy the reversed bits into a ulong sized buffer
-                Buffer.BlockCopy(buffer, 0, uintbuffer, 0, blocksize / 8);
+                ((ICollection)a).CopyTo(uintbuffer, 0);
+                //Buffer.BlockCopy(buffer, 0, uintbuffer, 0, chunksize);
                 ulong l = BitConverter.ToUInt64(uintbuffer, 0);
                 // move the target bits to the beginging of each split buffer
                 xr = (uint)(l << (64 - (blocksize / 2)) >> (64 - (blocksize / 2)));
@@ -432,11 +444,61 @@ namespace BlowfishVarBlock.PCL
                 l = ((ulong)xr) | ((ulong)xl << (blocksize / 2));
                 // map back into a buffer
                 uintbuffer = BitConverter.GetBytes(l);
-                Buffer.BlockCopy(uintbuffer, 0, buffer, 0, blocksize / 8);
+                
+                Buffer.BlockCopy(uintbuffer, 0, buffer, 0, chunksize);
+                // reverse because of uint byte ordering
+                Array.Reverse(buffer);
+
+
+                // copy back to original data
+                Buffer.BlockCopy(buffer, 0, data, i, chunksize);
+            }
+        }
+
+        /// <summary>
+        /// Encrypts a byte array in place with a variable block length.  User is responsible for padding implementation.
+        /// </summary>
+        /// <param name="data">The array to encrypt.</param>
+        /// <param name="length">The number of bytes to encrypt.  Must be a multiple of block size.</param>
+        /// <param name="blocksize">The block size (in bits) to use.  Must be divisible by 2 and between 16 and 64.</param>
+        public void EncipherOld(byte[] data, int length, int blocksize)
+        {
+            //todo: create a version that can project any even block size
+            uint xl, xr;
+
+            // determine needed chunksize from blocksize (number of bytes to cipher per cycle)
+            int chunksize = (blocksize % 8 == 0) ? blocksize / 8 : blocksize / 8 + 1;
+
+            if (blocksize > 64 || blocksize < 8 || (length % chunksize) != 0)
+                throw new Exception("Invalid Length");
+
+
+            byte[] buffer = new byte[chunksize];
+            byte[] uintbuffer = new byte[8];
+            for (int i = 0; i < length; i += (chunksize))
+            {
+                // create a blocksize payload in a 64-bit space by projecting blocksize/2 bits into two uints
+                // copy just the target bits into a blocksize buffer
+                Buffer.BlockCopy(data, i, buffer, 0, chunksize);
+                // need to reverse the bit order to create uint
+                Array.Reverse(buffer);
+                // copy the reversed bits into a ulong sized buffer
+                Buffer.BlockCopy(buffer, 0, uintbuffer, 0, chunksize);
+                ulong l = BitConverter.ToUInt64(uintbuffer, 0);
+                // move the target bits to the beginging of each split buffer
+                xr = (uint)(l << (64 - (blocksize / 2)) >> (64 - (blocksize / 2)));
+                xl = (uint)(l >> (blocksize / 2));
+                Encipher(ref xl, ref xr, blocksize);
+                // Reconstruct blocksize output
+                // recreate a block-size bit range in a UInt64
+                l = ((ulong)xr) | ((ulong)xl << (blocksize / 2));
+                // map back into a buffer
+                uintbuffer = BitConverter.GetBytes(l);
+                Buffer.BlockCopy(uintbuffer, 0, buffer, 0, chunksize);
                 // reverse because of uint byte ordering
                 Array.Reverse(buffer);
                 // copy back to original data
-                Buffer.BlockCopy(buffer, 0, data, i, blocksize / 8);
+                Buffer.BlockCopy(buffer, 0, data, i, chunksize);
             }
         }
         /// <summary>
@@ -639,19 +701,24 @@ namespace BlowfishVarBlock.PCL
         public void Decipher(byte[] data, int length, int blocksize)
         {
             uint xl, xr;
-            if (blocksize > 64 || blocksize < 8 || (length % (blocksize / 8)) != 0)
+            // determine needed chunksize from blocksize (number of bytes to cipher per cycle)
+            int chunksize = (blocksize % 8 == 0) ? blocksize / 8 : blocksize / 8 + 1;
+
+            if (blocksize > 64 || blocksize < 8 || (length % chunksize) != 0)
                 throw new Exception("Invalid Length");
-            byte[] buffer = new byte[blocksize / 8];
+
+
+            byte[] buffer = new byte[chunksize];
             byte[] uintbuffer = new byte[8];
-            for (int i = 0; i < length; i += (blocksize / 8))
+            for (int i = 0; i < length; i += (chunksize))
             {
                 // create a blocksize payload in a 64-bit space by projecting blocksize/2 bits into two uints
                 // copy just the target bits into a blocksize buffer
-                Buffer.BlockCopy(data, i, buffer, 0, blocksize / 8);
+                Buffer.BlockCopy(data, i, buffer, 0, chunksize);
                 // need to reverse the bit order to create uint
                 Array.Reverse(buffer);
                 // copy the reversed bits into a ulong sized buffer
-                Buffer.BlockCopy(buffer, 0, uintbuffer, 0, blocksize / 8);
+                Buffer.BlockCopy(buffer, 0, uintbuffer, 0, chunksize);
                 ulong l = BitConverter.ToUInt64(uintbuffer, 0);
                 // move the target bits to the beginging of each split buffer
                 xr = (uint)(l << (64 - (blocksize / 2)) >> (64 - (blocksize / 2)));
@@ -662,11 +729,11 @@ namespace BlowfishVarBlock.PCL
                 l = ((ulong)xr) | ((ulong)xl << (blocksize / 2));
                 // map back into a buffer
                 uintbuffer = BitConverter.GetBytes(l);
-                Buffer.BlockCopy(uintbuffer, 0, buffer, 0, blocksize / 8);
+                Buffer.BlockCopy(uintbuffer, 0, buffer, 0, chunksize);
                 // reverse because of uint byte ordering
-                Array.Reverse(buffer);
+                //Array.Reverse(buffer);
                 // copy back to original data
-                Buffer.BlockCopy(buffer, 0, data, i, blocksize / 8);
+                Buffer.BlockCopy(buffer, 0, data, i, chunksize);
             }
 
         }
