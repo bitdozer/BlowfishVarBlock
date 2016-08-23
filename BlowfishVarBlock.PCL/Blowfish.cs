@@ -629,7 +629,7 @@ namespace BlowfishVarBlock.PCL
         /// </summary>
         /// <param name="data">The array to decrypt.</param>
         /// <param name="length">The amount to decrypt.</param>
-        /// <param name="blocksize">The block size (in bits) to use.  Must be divisible by 2 and between 16 and 64.</param>
+        /// <param name="blocksize">The block size (in bits) to use.  Must be divisible by 8 and between 16 and 64.</param>
         public void Decipher(byte[] data, int length, int blocksize)
         {
             uint xl, xr;

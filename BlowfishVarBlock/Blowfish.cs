@@ -398,7 +398,7 @@ namespace BlowfishVarBlock
         /// </summary>
         /// <param name="data">The array to encrypt.</param>
         /// <param name="length">The number of bytes to encrypt.  Must be a multiple of block size.</param>
-        /// <param name="blocksize">The block size (in bits) to use.  Must be divisible by 2 and between 16 and 64.</param>
+        /// <param name="blocksize">The block size (in bits) to use.  Must be divisible by 8 and between 16 and 64.</param>
         public void Encipher(byte[] data, int length, int blocksize)
         {
             //todo: create a version that can project any even block size
@@ -629,7 +629,7 @@ namespace BlowfishVarBlock
         /// </summary>
         /// <param name="data">The array to decrypt.</param>
         /// <param name="length">The amount to decrypt.</param>
-        /// <param name="blocksize">The block size (in bits) to use.  Must be divisible by 2 and between 16 and 64.</param>
+        /// <param name="blocksize">The block size (in bits) to use.  Must be divisible by 8 and between 16 and 64.</param>
         public void Decipher(byte[] data, int length, int blocksize)
         {
             uint xl, xr;
