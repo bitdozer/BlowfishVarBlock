@@ -428,8 +428,9 @@ namespace BlowfishVarBlock.PCL
                 buffer.DumpBytes("bytes before cipher");
 
                 // todo: figure out how to convert a valid bitarray from one chunk size to another 
+                if (blocksize % 8 == 0)
 
-                Array.Reverse(buffer);
+                    Array.Reverse(buffer);
                 var a = new BitArray(buffer);
                 // need to reverse the bit order to create uint
                 // copy the reversed bits into a ulong sized buffer
@@ -458,7 +459,8 @@ namespace BlowfishVarBlock.PCL
                 Buffer.BlockCopy(uintbuffer, 0, buffer, 0, chunksize);
 
                 // reverse because of uint byte ordering
-                Array.Reverse(buffer);
+                if (blocksize % 8 == 0)
+                    Array.Reverse(buffer);
 
                 buffer.DumpBytes("bytes after cipher");
 
@@ -732,8 +734,9 @@ namespace BlowfishVarBlock.PCL
                 buffer.DumpBytes("bytes before decipher");
 
                 // todo: figure out how to convert a valid bitarray from one chunk size to another 
+                if (blocksize % 8 == 0)
 
-                Array.Reverse(buffer);
+                    Array.Reverse(buffer);
                 var a = new BitArray(buffer);
                 // need to reverse the bit order to create uint
                 // copy the reversed bits into a ulong sized buffer
@@ -761,7 +764,8 @@ namespace BlowfishVarBlock.PCL
                 Buffer.BlockCopy(uintbuffer, 0, buffer, 0, chunksize);
 
                 // reverse because of uint byte ordering
-                Array.Reverse(buffer);
+                if (blocksize % 8 == 0)
+                    Array.Reverse(buffer);
 
                 buffer.DumpBytes("bytes after decipher");
 
