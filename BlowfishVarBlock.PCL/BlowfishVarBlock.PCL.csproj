@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="Blowfish.cs" />
     <Compile Include="BlowfishStream.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

@@ -425,34 +425,42 @@ namespace BlowfishVarBlock.PCL
                 // create a blocksize payload in a 64-bit space by projecting blocksize/2 bits into two uints
                 // copy just the target bits into a blocksize buffer
                 Buffer.BlockCopy(data, i, buffer, 0, chunksize);
+                buffer.DumpBytes("bytes before cipher");
 
                 // todo: figure out how to convert a valid bitarray from one chunk size to another 
 
+                Array.Reverse(buffer);
                 var a = new BitArray(buffer);
                 // need to reverse the bit order to create uint
-                //Array.Reverse(buffer);
                 // copy the reversed bits into a ulong sized buffer
                 ((ICollection)a).CopyTo(uintbuffer, 0);
                 //Buffer.BlockCopy(buffer, 0, uintbuffer, 0, chunksize);
                 ulong l = BitConverter.ToUInt64(uintbuffer, 0);
+                l.DumpBinary("ulong before cipher");
                 // move the target bits to the beginging of each split buffer
                 xr = (uint)(l << (64 - (blocksize / 2)) >> (64 - (blocksize / 2)));
                 xl = (uint)(l >> (blocksize / 2));
+                Helpers.DumpBinary(xl, xr, "xl xr before cipher");
+
                 Encipher(ref xl, ref xr, blocksize);
+                Helpers.DumpBinary(xl, xr, "xl xr after cipher");
                 // Reconstruct blocksize output
                 // recreate a block-size bit range in a UInt64
                 l = ((ulong)xr) | ((ulong)xl << (blocksize / 2));
+
+                l.DumpBinary("ulong after cipher");
+
                 // map back into a buffer
                 uintbuffer = BitConverter.GetBytes(l);
-
                 //a = new BitArray(uintbuffer);
                 //((ICollection)a).CopyTo(uintbuffer, 0);
 
                 Buffer.BlockCopy(uintbuffer, 0, buffer, 0, chunksize);
 
                 // reverse because of uint byte ordering
-                //Array.Reverse(buffer);
+                Array.Reverse(buffer);
 
+                buffer.DumpBytes("bytes after cipher");
 
                 // copy back to original data
                 Buffer.BlockCopy(buffer, 0, data, i, chunksize);
@@ -625,7 +633,7 @@ namespace BlowfishVarBlock.PCL
             //return (uint)Math.Pow(2, blocksize/2) - 1;
             if (blocksize >= 64)
                 return uint.MaxValue;
-            return (uint)(2 << ((blocksize / 2) - 1)) - 1;
+            return (((uint)(1) << (blocksize /2)) - 1);
 
         }
 
@@ -721,25 +729,31 @@ namespace BlowfishVarBlock.PCL
                 // create a blocksize payload in a 64-bit space by projecting blocksize/2 bits into two uints
                 // copy just the target bits into a blocksize buffer
                 Buffer.BlockCopy(data, i, buffer, 0, chunksize);
+                buffer.DumpBytes("bytes before decipher");
 
                 // todo: figure out how to convert a valid bitarray from one chunk size to another 
 
+                Array.Reverse(buffer);
                 var a = new BitArray(buffer);
                 // need to reverse the bit order to create uint
-                //Array.Reverse(buffer);
                 // copy the reversed bits into a ulong sized buffer
                 ((ICollection)a).CopyTo(uintbuffer, 0);
                 //Buffer.BlockCopy(buffer, 0, uintbuffer, 0, chunksize);
                 ulong l = BitConverter.ToUInt64(uintbuffer, 0);
+                l.DumpBinary("ulong before decipher");
+
                 // move the target bits to the beginging of each split buffer
                 xr = (uint)(l << (64 - (blocksize / 2)) >> (64 - (blocksize / 2)));
                 xl = (uint)(l >> (blocksize / 2));
+                Helpers.DumpBinary(xl, xr, "xl xr before decipher");
                 Decipher(ref xl, ref xr, blocksize);
+                Helpers.DumpBinary(xl, xr, "xl xr after decipher");
                 // Reconstruct blocksize output
                 // recreate a block-size bit range in a UInt64
                 l = ((ulong)xr) | ((ulong)xl << (blocksize / 2));
                 // map back into a buffer
                 uintbuffer = BitConverter.GetBytes(l);
+                l.DumpBinary("ulong after decipher");
 
                 //a = new BitArray(uintbuffer);
                 //((ICollection)a).CopyTo(uintbuffer, 0);
@@ -747,8 +761,9 @@ namespace BlowfishVarBlock.PCL
                 Buffer.BlockCopy(uintbuffer, 0, buffer, 0, chunksize);
 
                 // reverse because of uint byte ordering
-                //Array.Reverse(buffer);
+                Array.Reverse(buffer);
 
+                buffer.DumpBytes("bytes after decipher");
 
                 // copy back to original data
                 Buffer.BlockCopy(buffer, 0, data, i, chunksize);
