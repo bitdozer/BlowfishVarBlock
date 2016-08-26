@@ -451,7 +451,7 @@ namespace BlowfishVarBlock.PCL
                 Buffer.BlockCopy(uintbuffer, 0, buffer, 0, chunksize);
 
                 // reverse because of uint byte ordering
-                Array.Reverse(buffer);
+                //Array.Reverse(buffer);
 
 
                 // copy back to original data
@@ -747,7 +747,7 @@ namespace BlowfishVarBlock.PCL
                 Buffer.BlockCopy(uintbuffer, 0, buffer, 0, chunksize);
 
                 // reverse because of uint byte ordering
-                Array.Reverse(buffer);
+                //Array.Reverse(buffer);
 
 
                 // copy back to original data
