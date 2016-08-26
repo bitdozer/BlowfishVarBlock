@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Native64bitBlockTests.cs" />
     <Compile Include="Native40bitBlockTests.cs" />
+    <Compile Include="Variable12bitBlockTests.cs" />
     <Compile Include="Variable36bitBlockTests.cs" />
     <Compile Include="Variable64bitBlockTests.cs" />
     <Compile Include="Variable40bitBlockTests.cs" />
