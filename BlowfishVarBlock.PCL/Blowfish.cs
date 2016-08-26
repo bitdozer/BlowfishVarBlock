@@ -444,8 +444,12 @@ namespace BlowfishVarBlock.PCL
                 l = ((ulong)xr) | ((ulong)xl << (blocksize / 2));
                 // map back into a buffer
                 uintbuffer = BitConverter.GetBytes(l);
-                
+
+                //a = new BitArray(uintbuffer);
+                //((ICollection)a).CopyTo(uintbuffer, 0);
+
                 Buffer.BlockCopy(uintbuffer, 0, buffer, 0, chunksize);
+
                 // reverse because of uint byte ordering
                 Array.Reverse(buffer);
 
@@ -619,6 +623,8 @@ namespace BlowfishVarBlock.PCL
         private uint MaskForBlockSize(int blocksize)
         {
             //return (uint)Math.Pow(2, blocksize/2) - 1;
+            if (blocksize >= 64)
+                return uint.MaxValue;
             return (uint)(2 << ((blocksize / 2) - 1)) - 1;
 
         }
@@ -715,10 +721,15 @@ namespace BlowfishVarBlock.PCL
                 // create a blocksize payload in a 64-bit space by projecting blocksize/2 bits into two uints
                 // copy just the target bits into a blocksize buffer
                 Buffer.BlockCopy(data, i, buffer, 0, chunksize);
+
+                // todo: figure out how to convert a valid bitarray from one chunk size to another 
+
+                var a = new BitArray(buffer);
                 // need to reverse the bit order to create uint
-                Array.Reverse(buffer);
+                //Array.Reverse(buffer);
                 // copy the reversed bits into a ulong sized buffer
-                Buffer.BlockCopy(buffer, 0, uintbuffer, 0, chunksize);
+                ((ICollection)a).CopyTo(uintbuffer, 0);
+                //Buffer.BlockCopy(buffer, 0, uintbuffer, 0, chunksize);
                 ulong l = BitConverter.ToUInt64(uintbuffer, 0);
                 // move the target bits to the beginging of each split buffer
                 xr = (uint)(l << (64 - (blocksize / 2)) >> (64 - (blocksize / 2)));
@@ -729,9 +740,16 @@ namespace BlowfishVarBlock.PCL
                 l = ((ulong)xr) | ((ulong)xl << (blocksize / 2));
                 // map back into a buffer
                 uintbuffer = BitConverter.GetBytes(l);
+
+                //a = new BitArray(uintbuffer);
+                //((ICollection)a).CopyTo(uintbuffer, 0);
+
                 Buffer.BlockCopy(uintbuffer, 0, buffer, 0, chunksize);
+
                 // reverse because of uint byte ordering
-                //Array.Reverse(buffer);
+                Array.Reverse(buffer);
+
+
                 // copy back to original data
                 Buffer.BlockCopy(buffer, 0, data, i, chunksize);
             }

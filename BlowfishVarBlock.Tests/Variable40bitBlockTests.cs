@@ -9,7 +9,7 @@ namespace BlowfishVarBlock.Tests
     {
         byte[] key = new byte[] { 0x20, 0x36, 0xac, 0x45, 0xd0 };
         [TestMethod]
-        public void UInt64_40Bit_Min()
+        public void Var_UInt64_40Bit_Min()
         {
             const ulong sourceValue = ulong.MinValue;
             ulong encryptedValue = ulong.MinValue;
@@ -45,7 +45,7 @@ namespace BlowfishVarBlock.Tests
             Assert.AreEqual(sourceValue, targetValue);
         }
         [TestMethod]
-        public void UInt64_40Bit_Max()
+        public void Var_UInt64_40Bit_Max()
         {
             const ulong sourceValue = (((ulong)1) << 40) - 1; // 40-bit int MaxValue
             ulong encryptedValue = ulong.MinValue;
@@ -82,7 +82,7 @@ namespace BlowfishVarBlock.Tests
             Assert.AreEqual(sourceValue, targetValue);
         }
         [TestMethod]
-        public void UInt64_40Bit_Mixed()
+        public void Var_UInt64_40Bit_Mixed()
         {
             const ulong sourceValue = (((ulong)1) << 40) - 10; // 40-bit int MaxValue
             ulong encryptedValue = ulong.MinValue;
@@ -119,7 +119,7 @@ namespace BlowfishVarBlock.Tests
             Assert.AreEqual(sourceValue, targetValue);
         }
         [TestMethod]
-        public void Multiple_Blocks()
+        public void Var_UInt64_40Bit_Multiple_Blocks()
         {
             byte[] original = new byte[] { 0x20, 0x36, 0x45, 0xac, 0xd0, 0x20, 0x36, 0xac, 0x45, 0xd0, 0x20, 0x36, 0xac, 0x45, 0xd0 };
             byte[] encypheredExpected = new byte[] { 52, 202, 24, 208, 6, 73, 45, 38, 128, 114, 73, 45, 38, 128, 114 };

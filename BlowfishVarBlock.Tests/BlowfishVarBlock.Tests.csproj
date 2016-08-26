@@ -50,8 +50,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Native64bitBlockTests.cs" />
     <Compile Include="Native40bitBlockTests.cs" />
     <Compile Include="Variable36bitBlockTests.cs" />
+    <Compile Include="Variable64bitBlockTests.cs" />
     <Compile Include="Variable40bitBlockTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

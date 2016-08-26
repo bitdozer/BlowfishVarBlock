@@ -9,7 +9,7 @@ namespace BlowfishVarBlock.Tests
     {
         byte[] key = new byte[] { 0x20, 0x36, 0xac, 0x45, 0xd0 };
         [TestMethod]
-        public void UInt64_36Bit_Min()
+        public void Var_UInt64_36Bit_Min()
         {
             const ulong sourceValue = ulong.MinValue;
             ulong encryptedValue = ulong.MinValue;
@@ -45,7 +45,7 @@ namespace BlowfishVarBlock.Tests
             Assert.AreEqual(sourceValue, targetValue);
         }
         [TestMethod]
-        public void UInt64_36Bit_Max()
+        public void Var_UInt64_36Bit_Max()
         {
             const ulong sourceValue = (((ulong)1) << 36) - 1; // 36-bit int MaxValue
             ulong encryptedValue = ulong.MinValue;
@@ -82,7 +82,7 @@ namespace BlowfishVarBlock.Tests
             Assert.AreEqual(sourceValue, targetValue);
         }
         [TestMethod]
-        public void UInt64_36Bit_Mixed()
+        public void Var_UInt64_36Bit_Mixed()
         {
             const ulong sourceValue = (((ulong)1) << 36) - 10; // 36-bit int MaxValue
             ulong encryptedValue = ulong.MinValue;
@@ -119,7 +119,7 @@ namespace BlowfishVarBlock.Tests
             Assert.AreEqual(sourceValue, targetValue);
         }
         [TestMethod]
-        public void Multiple_Blocks()
+        public void Var_UInt64_36Bit_Multiple_Blocks()
         {
             ulong[] data = new ulong[] { ulong.MinValue, ulong.MinValue+1, ulong.MinValue+2, (((ulong)1) << 36) - 3, (((ulong)1) << 36) - 2, (((ulong)1) << 36) - 1 };
             // Blowfish will calculate that a chunksize of 5 is required for 36-bit data, so provide that
